@@ -8,12 +8,12 @@ class X:
     def evaluate(self, x_value):
         # TODO: Implement evaluation for variable X
         # Should return an Int object with the given x_value
-        pass
+        return Int(x_value)
 
     def simplify(self):
         # TODO (Optional Exercise): Implement simplification
         # X cannot be simplified further, so return self
-        pass
+        return self
 
 
 class Int:
@@ -26,12 +26,12 @@ class Int:
     def evaluate(self, x_value):
         # TODO: Implement evaluation for integer constant
         # Should return an Int object with the stored integer value
-        pass
+        return Int(self.i)
 
     def simplify(self):
         # TODO (Optional Exercise): Implement simplification
         # Integer constants cannot be simplified further, so return self
-        pass
+        return(self)
 
 
 class Add:
@@ -43,9 +43,9 @@ class Add:
         return repr(self.p1) + " + " + repr(self.p2)
 
     def evaluate(self, x_value):
-        # TODO: Implement evaluation for addition
-        # Should evaluate both operands and return their sum
-        pass
+        left_val = self.p1.evaluate(x_value)
+        right_val = self.p2.evaluate(x_value)
+        return Int(left_val.i + right_val.i)
 
     def simplify(self):
         # TODO (Optional Exercise): Implement simplification
@@ -71,7 +71,9 @@ class Mul:
     def evaluate(self, x_value):
         # TODO: Implement evaluation for multiplication
         # Should evaluate both operands and return their product
-        pass
+        left_val = self.p1.evaluate(x_value)
+        right_val = self.p2.evaluate(x_value)
+        return Int(left_val.i * right_val.i)
 
     def simplify(self):
         # TODO (Optional Exercise): Implement simplification
@@ -89,12 +91,26 @@ class Sub:
         # TODO: Implement string representation for subtraction
         # Should handle parentheses similar to Mul class
         # Hint: Look at how Mul class handles parentheses
-        pass
+        # 1 - 2; 1 - (2-3)
+        if isinstance(self.p1, Add):
+            left = "( " + repr(self.p1) + " )"
+        else:
+            left = repr(self.p1)
+
+        if isinstance(self.p2, (Add, Sub)):
+            right = "( " + repr(self.p2) + " )"
+        else:
+            right = repr(self.p2)
+
+        return left + " - " + right
+
 
     def evaluate(self, x_value):
         # TODO: Implement evaluation for subtraction
         # Should return the difference of the two operands
-        pass
+        left_val = self.p1.evaluate(x_value)
+        right_val = self.p2.evaluate(x_value)
+        return Int(left_val.i - right_val.i)
 
     def simplify(self):
         # TODO (Optional Exercise): Implement simplification
@@ -112,12 +128,23 @@ class Div:
         # TODO: Implement string representation for division
         # Should handle parentheses similar to Mul class
         # Hint: Look at how Mul class handles parentheses
-        pass
+        if isinstance(self.p1, (Add, Sub)):
+            left = "( " + repr(self.p1) + " )"
+        else: left = repr(self.p1)
+
+        if isinstance(self.p2, (Add, Sub, Div)):
+            right = "( " + repr(self.p2) + " )"
+        else: right = repr(self.p2)
+
+        return left + " / " + right
+
 
     def evaluate(self, x_value):
         # TODO: Implement evaluation for division
         # Should return the quotient of the two operands (use integer division //)
-        pass
+        left_val = self.p1.evaluate(x_value)
+        right_val = self.p2.evaluate(x_value)
+        return Int(left_val.i / right_val.i)
 
     def simplify(self):
         # TODO (Optional Exercise): Implement simplification
