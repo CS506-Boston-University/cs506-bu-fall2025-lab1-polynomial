@@ -94,7 +94,9 @@ class Sub:
     def evaluate(self, x_value):
         # TODO: Implement evaluation for subtraction
         # Should return the difference of the two operands
-        pass
+        v1 = self.p1.evaluate(x_value).i
+        v2 = self.p2.evaluate(x_value).i
+        return Int(v1 - v2)
 
     def simplify(self):
         # TODO (Optional Exercise): Implement simplification
@@ -117,7 +119,11 @@ class Div:
     def evaluate(self, x_value):
         # TODO: Implement evaluation for division
         # Should return the quotient of the two operands (use integer division //)
-        pass
+        numerator = self.p1.evaluate(x_value).i
+        denominator = self.p2.evaluate(x_value).i
+        if denominator == 0:
+            raise ZeroDivisionError("Division by zero, can't evaluate")
+        return Int(numerator // denominator)
 
     def simplify(self):
         # TODO (Optional Exercise): Implement simplification
