@@ -86,21 +86,38 @@ class Sub:
         self.p2 = p2
 
     def __repr__(self):
-        # TODO: Implement string representation for subtraction
-        # Should handle parentheses similar to Mul class
-        # Hint: Look at how Mul class handles parentheses
-        pass
+        left = repr(self.p1)
+        right = repr(self.p2)
+
+        if isinstance(self.p1, Add):
+            left = "( " + left + " )"
+        if isinstance(self.p2, (Add, Sub)):
+            right = "( " + right + " )"
+
+        return left + " - " + right
 
     def evaluate(self, x_value):
-        # TODO: Implement evaluation for subtraction
-        # Should return the difference of the two operands
-        pass
+        v1 = self.p1.evaluate(x_value)
+        v2 = self.p2.evaluate(x_value)
+        return Int(v1.i - v2.i)
 
     def simplify(self):
-        # TODO (Optional Exercise): Implement simplification
-        # Examples: X - 0 -> X, 5 - 3 -> 2
-        # Hint: Simplify operands first, then apply simplification rules
-        pass
+        s1 = self.p1.simplify()
+        s2 = self.p2.simplify()
+
+        if isinstance(s2, Int) and s2.i == 0:
+            return s1
+
+        if isinstance(s1, Int) and s1.i == 0:
+            return Mul(Int(-1), s2).simplify()
+
+        if isinstance(s1, Int) and isinstance(s2, Int):
+            return Int(s1.i - s2.i)
+
+        if repr(s1) == repr(s2):
+            return Int(0)
+
+        return Sub(s1, s2)
 
 
 class Div:
@@ -109,22 +126,42 @@ class Div:
         self.p2 = p2
 
     def __repr__(self):
-        # TODO: Implement string representation for division
-        # Should handle parentheses similar to Mul class
-        # Hint: Look at how Mul class handles parentheses
-        pass
+        left = repr(self.p1)
+        right = repr(self.p2)
+
+        if isinstance(self.p1, (Add, Sub)):
+            left = "( " + left + " )"
+        if isinstance(self.p2, (Add, Sub)):
+            right = "( " + right + " )"
+
+        return left + " / " + right
 
     def evaluate(self, x_value):
-        # TODO: Implement evaluation for division
-        # Should return the quotient of the two operands (use integer division //)
-        pass
+        v1 = self.p1.evaluate(x_value)
+        v2 = self.p2.evaluate(x_value)
+        if v2.i == 0:
+            raise ZeroDivisionError("Division by zero in Div.evaluate")
+        return Int(v1.i // v2.i)
 
     def simplify(self):
-        # TODO (Optional Exercise): Implement simplification
-        # Examples: X / 1 -> X, 6 / 2 -> 3
-        # Hint: Simplify operands first, then apply simplification rules
-        pass
+        s1 = self.p1.simplify()
+        s2 = self.p2.simplify()
 
+        if isinstance(s1, Int) and s1.i == 0:
+            return Int(0)
+
+        if isinstance(s2, Int) and s2.i == 1:
+            return s1
+
+        if isinstance(s1, Int) and isinstance(s2, Int):
+            if s2.i == 0:
+                raise ZeroDivisionError("Division by zero in Div.simplify")
+            return Int(s1.i // s2.i)
+
+        if repr(s1) == repr(s2):
+            return Int(1)
+
+        return Div(s1, s2)
 
 # Original polynomial example
 poly = Add(Add(Int(4), Int(3)), Add(X(), Mul(Int(1), Add(Mul(X(), X()), Int(1)))))
