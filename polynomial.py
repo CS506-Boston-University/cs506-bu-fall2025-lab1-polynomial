@@ -8,11 +8,8 @@ class X:
     def evaluate(self, x_value):
         return Int(x_value)
 
-
     def simplify(self):
-        # TODO (Optional Exercise): Implement simplification
-        # X cannot be simplified further, so return self
-        pass
+        return self
 
 
 class Int:
@@ -26,9 +23,7 @@ class Int:
         return Int(self.i)
 
     def simplify(self):
-        # TODO (Optional Exercise): Implement simplification
-        # Integer constants cannot be simplified further, so return self
-        pass
+        return self
 
 
 class Add:
@@ -45,10 +40,18 @@ class Add:
         return Int(v1.i + v2.i)
 
     def simplify(self):
-        # TODO (Optional Exercise): Implement simplification
-        # Examples: X + 0 -> X, 0 + X -> X, 3 + 5 -> 8
-        # Hint: Simplify operands first, then apply simplification rules
-        pass
+        s1 = self.p1.simplify()
+        s2 = self.p2.simplify()
+
+        if isinstance(s1, Int) and s1.i == 0:
+            return s2
+        if isinstance(s2, Int) and s2.i == 0:
+            return s1
+
+        if isinstance(s1, Int) and isinstance(s2, Int):
+            return Int(s1.i + s2.i)
+
+        return Add(s1, s2)
 
 
 class Mul:
@@ -71,10 +74,21 @@ class Mul:
         return Int(v1.i * v2.i)
 
     def simplify(self):
-        # TODO (Optional Exercise): Implement simplification
-        # Examples: X * 0 -> 0, X * 1 -> X, 3 * 5 -> 15
-        # Hint: Simplify operands first, then apply simplification rules
-        pass
+        s1 = self.p1.simplify()
+        s2 = self.p2.simplify()
+
+        if (isinstance(s1, Int) and s1.i == 0) or (isinstance(s2, Int) and s2.i == 0):
+            return Int(0)
+
+        if isinstance(s1, Int) and s1.i == 1:
+            return s2
+        if isinstance(s2, Int) and s2.i == 1:
+            return s1
+
+        if isinstance(s1, Int) and isinstance(s2, Int):
+            return Int(s1.i * s2.i)
+
+        return Mul(s1, s2)
 
 
 class Sub:
@@ -152,7 +166,7 @@ class Div:
 
         if isinstance(s1, Int) and isinstance(s2, Int):
             if s2.i == 0:
-                raise ZeroDivisionError("Division by zero in Div.simplify")
+                return Div(s1, s2)
             return Int(s1.i // s2.i)
 
         if repr(s1) == repr(s2):
