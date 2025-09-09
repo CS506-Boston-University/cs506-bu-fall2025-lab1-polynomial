@@ -174,7 +174,7 @@ except Exception as e:
     print(
         "❌ Original polynomial evaluation failed - evaluate methods not implemented yet"
     )
-
+# hi
 # Option to run comprehensive tests
 if __name__ == "__main__":
     import sys
