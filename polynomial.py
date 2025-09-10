@@ -8,12 +8,12 @@ class X:
     def evaluate(self, x_value):
         # TODO: Implement evaluation for variable X
         # Should return an Int object with the given x_value
-        pass
+        return Int(x_value)
 
     def simplify(self):
         # TODO (Optional Exercise): Implement simplification
         # X cannot be simplified further, so return self
-        pass
+        return self
 
 
 class Int:
@@ -26,12 +26,12 @@ class Int:
     def evaluate(self, x_value):
         # TODO: Implement evaluation for integer constant
         # Should return an Int object with the stored integer value
-        pass
+        return self
 
     def simplify(self):
         # TODO (Optional Exercise): Implement simplification
         # Integer constants cannot be simplified further, so return self
-        pass
+        return self
 
 
 class Add:
@@ -39,19 +39,29 @@ class Add:
         self.p1 = p1
         self.p2 = p2
 
-    def __repr__(self):
+    def __repr__(self):    
         return repr(self.p1) + " + " + repr(self.p2)
 
     def evaluate(self, x_value):
         # TODO: Implement evaluation for addition
         # Should evaluate both operands and return their sum
-        pass
+        left = self.p1.evaluate(x_value)
+        right = self.p2.evaluate(x_value)
+        return Int(left.i + right.i)
 
     def simplify(self):
         # TODO (Optional Exercise): Implement simplification
         # Examples: X + 0 -> X, 0 + X -> X, 3 + 5 -> 8
         # Hint: Simplify operands first, then apply simplification rules
-        pass
+        left = self.p1.simplify()
+        right = self.p2.simplify()
+        if isinstance(left, Int) and isinstance(right, Int):
+            return Int(left.i + right.i)
+        if isinstance(left, Int) and left.i == 0:
+            return right
+        if isinstance(right, Int) and right.i == 0:
+            return left
+        return Add(left, right)
 
 
 class Mul:
@@ -71,13 +81,25 @@ class Mul:
     def evaluate(self, x_value):
         # TODO: Implement evaluation for multiplication
         # Should evaluate both operands and return their product
-        pass
+        left = self.p1.evaluate(x_value)
+        right = self.p2.evaluate(x_value)
+        return Int(left.i * right.i)
 
     def simplify(self):
-        # TODO (Optional Exercise): Implement simplification
+         # TODO (Optional Exercise): Implement simplification
         # Examples: X * 0 -> 0, X * 1 -> X, 3 * 5 -> 15
         # Hint: Simplify operands first, then apply simplification rules
-        pass
+        left = self.p1.simplify()
+        right = self.p2.simplify()
+        if isinstance(left, Int) and isinstance(right, Int):
+            return Int(left.i * right.i)
+        if (isinstance(left, Int) and left.i == 0) or (isinstance(right, Int) and right.i == 0):
+            return Int(0)
+        if isinstance(left, Int) and left.i == 1:
+            return right
+        if isinstance(right, Int) and right.i == 1:
+            return left
+        return Mul(left, right)
 
 
 class Sub:
@@ -89,18 +111,32 @@ class Sub:
         # TODO: Implement string representation for subtraction
         # Should handle parentheses similar to Mul class
         # Hint: Look at how Mul class handles parentheses
-        pass
+        left = repr(self.p1)
+        right = repr(self.p2)
+        if isinstance(self.p1, Add) or isinstance(self.p1, Sub):
+            left = f"( {left} )"
+        if isinstance(self.p2, Add) or isinstance(self.p2, Sub):
+            right = f"( {right} )"
+        return f"{left} - {right}"
 
     def evaluate(self, x_value):
         # TODO: Implement evaluation for subtraction
         # Should return the difference of the two operands
-        pass
+        left = self.p1.evaluate(x_value)
+        right = self.p2.evaluate(x_value)
+        return Int(left.i - right.i)
 
     def simplify(self):
         # TODO (Optional Exercise): Implement simplification
         # Examples: X - 0 -> X, 5 - 3 -> 2
         # Hint: Simplify operands first, then apply simplification rules
-        pass
+        left = self.p1.simplify()
+        right = self.p2.simplify()
+        if isinstance(left, Int) and isinstance(right, Int):
+            return Int(left.i - right.i)
+        if isinstance(right, Int) and right.i == 0:
+            return left
+        return Sub(left, right)
 
 
 class Div:
@@ -112,18 +148,30 @@ class Div:
         # TODO: Implement string representation for division
         # Should handle parentheses similar to Mul class
         # Hint: Look at how Mul class handles parentheses
-        pass
+        left = repr(self.p1)
+        right = repr(self.p2)
+        if isinstance(self.p1, Add) or isinstance(self.p1, Sub):
+            left = f"( {left} )"
+        if isinstance(self.p2, Add) or isinstance(self.p2, Sub):
+            right = f"( {right} )"
+        return f"{left} / {right}"
 
     def evaluate(self, x_value):
         # TODO: Implement evaluation for division
         # Should return the quotient of the two operands (use integer division //)
-        pass
+        left = self.p1.evaluate(x_value)
+        right = self.p2.evaluate(x_value)
+        return Int(left.i // right.i)
 
     def simplify(self):
         # TODO (Optional Exercise): Implement simplification
         # Examples: X / 1 -> X, 6 / 2 -> 3
         # Hint: Simplify operands first, then apply simplification rules
-        pass
+        left = self.p1.simplify()
+        right = self.p2.simplify()
+        if isinstance(left, Int) and isinstance(right, Int):
+            return Int(left.i // right.i)
+        
 
 
 # Original polynomial example
@@ -176,3 +224,4 @@ if __name__ == "__main__":
     else:
         print("\n💡 To run comprehensive tests, use: python polynomial.py --test")
         print("💡 Or run directly: python test_polynomial.py")
+        
