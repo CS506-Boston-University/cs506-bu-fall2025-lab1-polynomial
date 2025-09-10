@@ -56,7 +56,7 @@ class Add:
         # First simplify both operands
         simplified_p1 = self.p1.simplify()
         simplified_p2 = self.p2.simplify()
-        
+
         # Apply simplification rules
         # X + 0 -> X
         if isinstance(simplified_p2, Int) and simplified_p2.i == 0:
@@ -100,7 +100,7 @@ class Mul:
         # First simplify both operands
         simplified_p1 = self.p1.simplify()
         simplified_p2 = self.p2.simplify()
-        
+
         # Apply simplification rules
         # X * 0 -> 0 (anything times 0 is 0)
         if isinstance(simplified_p1, Int) and simplified_p1.i == 0:
@@ -151,7 +151,7 @@ class Sub:
         # First simplify both operands
         simplified_p1 = self.p1.simplify()
         simplified_p2 = self.p2.simplify()
-        
+
         # Apply simplification rules
         # X - 0 -> X
         if isinstance(simplified_p2, Int) and simplified_p2.i == 0:
@@ -195,7 +195,7 @@ class Div:
         # First simplify both operands
         simplified_p1 = self.p1.simplify()
         simplified_p2 = self.p2.simplify()
-        
+
         # Apply simplification rules
         # X / 1 -> X
         if isinstance(simplified_p2, Int) and simplified_p2.i == 1:
@@ -208,7 +208,7 @@ class Div:
         return Div(simplified_p1, simplified_p2)
 
 
-# Original polynomial example  
+# Original polynomial example
 poly = Add(Add(Int(4), Int(3)), Add(X(), Mul(Int(1), Add(Mul(X(), X()), Int(1)))))
 print("Original polynomial:", poly)
 
