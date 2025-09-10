@@ -6,9 +6,7 @@ class X:
         return "X"
 
     def evaluate(self, x_value):
-        # TODO: Implement evaluation for variable X
-        # Should return an Int object with the given x_value
-        pass
+        return Int(x_value)
 
     def simplify(self):
         # TODO (Optional Exercise): Implement simplification
@@ -22,11 +20,12 @@ class Int:
 
     def __repr__(self):
         return str(self.i)
+    
+    def ret(self):
+        return self.i
 
     def evaluate(self, x_value):
-        # TODO: Implement evaluation for integer constant
-        # Should return an Int object with the stored integer value
-        pass
+        return self
 
     def simplify(self):
         # TODO (Optional Exercise): Implement simplification
@@ -43,9 +42,23 @@ class Add:
         return repr(self.p1) + " + " + repr(self.p2)
 
     def evaluate(self, x_value):
-        # TODO: Implement evaluation for addition
-        # Should evaluate both operands and return their sum
-        pass
+        cond1 = isinstance(self.p1, Add) or isinstance(self.p1, Sub) or isinstance(self.p1, Mul) or isinstance(self.p1, Div)
+        cond2 = isinstance(self.p2, Add) or isinstance(self.p2, Sub) or isinstance(self.p2, Mul) or isinstance(self.p2, Div)
+        xcond1 = isinstance(self.p1, X)
+        xcond2 = isinstance(self.p2, X)
+
+        if cond1 or xcond1:
+            if cond2 or xcond2:
+                res1 = self.p1.evaluate(x_value)
+                res2 = self.p2.evaluate(x_value)        
+                return Int(res1.ret()+res2.ret())
+            res1 = self.p1.evaluate(x_value)
+            return Int(res1.ret()+self.p2.ret())
+        if cond2 or xcond2:
+            res2 = self.p2.evaluate(x_value)
+            return Int(self.p1.ret()+res2.ret())
+        
+        return Int(self.p1.ret()+self.p2.ret())
 
     def simplify(self):
         # TODO (Optional Exercise): Implement simplification
@@ -69,9 +82,22 @@ class Mul:
         return repr(self.p1) + " * " + repr(self.p2)
 
     def evaluate(self, x_value):
-        # TODO: Implement evaluation for multiplication
-        # Should evaluate both operands and return their product
-        pass
+        cond1 = isinstance(self.p1, Add) or isinstance(self.p1, Sub) or isinstance(self.p1, Mul) or isinstance(self.p1, Div)
+        cond2 = isinstance(self.p2, Add) or isinstance(self.p2, Sub) or isinstance(self.p2, Mul) or isinstance(self.p2, Div)
+        xcond1 = isinstance(self.p1, X)
+        xcond2 = isinstance(self.p2, X)
+        if cond1 or xcond1:
+            if cond2 or xcond2:
+                res1 = self.p1.evaluate(x_value)
+                res2 = self.p2.evaluate(x_value)
+                return Int(res1.ret()*res2.ret())
+            res1 = self.p1.evaluate(x_value)
+            return Int(res1.ret()*self.p2.ret())
+        if cond2 or xcond2:
+            res2 = self.p2.evaluate(x_value)
+            return Int(self.p1.ret()*res2.ret())
+        
+        return Int(self.p1.ret()*self.p2.ret())
 
     def simplify(self):
         # TODO (Optional Exercise): Implement simplification
@@ -86,15 +112,32 @@ class Sub:
         self.p2 = p2
 
     def __repr__(self):
-        # TODO: Implement string representation for subtraction
-        # Should handle parentheses similar to Mul class
-        # Hint: Look at how Mul class handles parentheses
-        pass
+        if isinstance(self.p1, Add):
+            if isinstance(self.p2, Add):
+                return "( "+repr(self.p1)+" ) - ( "+repr(self.p2)+" )"
+            return "( "+repr(self.p1)+" ) - "+repr(self.p2)
+        if isinstance(self.p2, Add):
+            return repr(self.p1)+" - ( "+repr(self.p2)+" )"
+        return repr(self.p1)+" - "+repr(self.p2)
 
     def evaluate(self, x_value):
-        # TODO: Implement evaluation for subtraction
-        # Should return the difference of the two operands
-        pass
+        cond1 = isinstance(self.p1, Add) or isinstance(self.p1, Sub) or isinstance(self.p1, Mul) or isinstance(self.p1, Div)
+        cond2 = isinstance(self.p2, Add) or isinstance(self.p2, Sub) or isinstance(self.p2, Mul) or isinstance(self.p2, Div)
+        xcond1 = isinstance(self.p1, X)
+        xcond2 = isinstance(self.p2, X)
+        if cond1 or xcond1:
+            if cond2 or xcond2:
+                res1 = self.p1.evaluate(x_value)
+                res2 = self.p2.evaluate(x_value)
+                return Int(res1.ret()-res2.ret())
+            res1 = self.p1.evaluate(x_value)
+            return Int(res1.ret()-self.p2.ret())
+        if cond2 or xcond2:
+            res2 = self.p2.evaluate(x_value)
+            return Int(self.p1.ret()-res2.ret())
+        
+        return Int(self.p1.ret()-self.p2.ret())
+        
 
     def simplify(self):
         # TODO (Optional Exercise): Implement simplification
@@ -109,15 +152,67 @@ class Div:
         self.p2 = p2
 
     def __repr__(self):
-        # TODO: Implement string representation for division
-        # Should handle parentheses similar to Mul class
-        # Hint: Look at how Mul class handles parentheses
-        pass
+        if isinstance(self.p1, Add) or isinstance(self.p1, Sub):
+            if isinstance(self.p2, Add) or isinstance(self.p2, Sub):
+                return "( "+repr(self.p1)+" ) / ( "+repr(self.p2)+" )"
+            return "( "+repr(self.p1)+" ) / "+repr(self.p2)
+        if isinstance(self.p2, Add) or isinstance(self.p2, Sub):
+            return repr(self.p1)+" / ( "+repr(self.p2)+" )"
+        return repr(self.p1)+" / "+repr(self.p2)
 
     def evaluate(self, x_value):
-        # TODO: Implement evaluation for division
-        # Should return the quotient of the two operands (use integer division //)
+        cond1 = isinstance(self.p1, Add) or isinstance(self.p1, Sub) or isinstance(self.p1, Mul) or isinstance(self.p1, Div)
+        cond2 = isinstance(self.p2, Add) or isinstance(self.p2, Sub) or isinstance(self.p2, Mul) or isinstance(self.p2, Div)
+        xcond1 = isinstance(self.p1, X)
+        xcond2 = isinstance(self.p2, X)
+        if cond1 or xcond1:
+            if cond2 or xcond2:
+                res1 = self.p1.evaluate(x_value)
+                res2 = self.p2.evaluate(x_value)
+                return Int(res1.ret()//res2.ret())
+            res1 = self.p1.evaluate(x_value)
+            return Int(res1.ret()//self.p2.ret())
+        if cond2 or xcond2:
+            res2 = self.p2.evaluate(x_value)
+            return Int(self.p1.ret()//res2.ret())
+        
+        return Int(self.p1.ret()//self.p2.ret())
+
+    def simplify(self):
+        # TODO (Optional Exercise): Implement simplification
+        # Examples: X / 1 -> X, 6 / 2 -> 3
+        # Hint: Simplify operands first, then apply simplification rules
         pass
+    def __init__(self, p1, p2):
+        self.p1 = p1
+        self.p2 = p2
+
+    def __repr__(self):
+        if isinstance(self.p1, Add) or isinstance(self.p1, Sub):
+            if isinstance(self.p2, Add) or isinstance(self.p2, Sub):
+                return "( "+repr(self.p1)+" ) / ( "+repr(self.p2)+" )"
+            return "( "+repr(self.p1)+" ) / "+repr(self.p2)
+        if isinstance(self.p2, Add) or isinstance(self.p2, Sub):
+            return repr(self.p1)+" / ( "+repr(self.p2)+" )"
+        return repr(self.p1)+" / "+repr(self.p2)
+
+    def evaluate(self, x_value):
+        cond1 = isinstance(self.p1, Add) or isinstance(self.p1, Sub) or isinstance(self.p1, Mul) or isinstance(self.p1, Div)
+        cond2 = isinstance(self.p2, Add) or isinstance(self.p2, Sub) or isinstance(self.p2, Mul) or isinstance(self.p2, Div)
+        xcond1 = isinstance(self.p1, X)
+        xcond2 = isinstance(self.p2, X)
+        if cond1 or xcond1:
+            if cond2 or xcond2:
+                res1 = self.p1.evaluate(x_value)
+                res2 = self.p2.evaluate(x_value)
+                return Int(res1.ret()//res2.ret())
+            res1 = self.p1.evaluate(x_value)
+            return Int(res1.ret()//self.p2.ret())
+        if cond2 or xcond2:
+            res2 = self.p2.evaluate(x_value)
+            return Int(self.p1.ret()//res2.ret())
+        
+        return Int(self.p1.ret()//self.p2.ret())
 
     def simplify(self):
         # TODO (Optional Exercise): Implement simplification
