@@ -53,6 +53,7 @@ class Add:
         v2 = self.p2.evaluate(x_value)
         return Int(v1.i + v2.i)
 
+        #Added subtraction and division
         #pass
 
     def simplify(self):
